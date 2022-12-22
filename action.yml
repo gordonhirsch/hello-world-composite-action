@@ -15,9 +15,11 @@ runs:
         cache: 'yarn'
     - name: Install npm dependencies
       run: yarn install
+      shell: bash
     - name: Deploy
       env:
         # Token from the Partner Dashboard
         SHOPIFY_CLI_PARTNERS_TOKEN: ${{ inputs.partners-token }}
         SHOPIFY_API_KEY: ${{ inputs.api-key }}
       run: yarn deploy
+      shell: bash
