@@ -1,24 +1,23 @@
-name: 'Hello World'
-description: 'Greet someone'
+name: 'Deploy'
+description: 'Deploy a Shopify application'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  partners-token:
     required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-number }}
+  api-key:
+    required: true
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
-    - id: random-number-generator
-      run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
-      shell: bash
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-      shell: bash
-    - run: goodbye.sh
-      shell: bash
-
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'yarn'
+    - name: Install npm dependencies
+      run: yarn install
+    - name: Deploy
+      env:
+        # Token from the Partner Dashboard
+        SHOPIFY_CLI_PARTNERS_TOKEN: ${{ inputs.partners-token }}
+        SHOPIFY_API_KEY: ${{ inputs.api-key }}
+      run: yarn deploy
